@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <button onclick="start()">start sending audio to server</button>
+    <button onclick="stop()">stop sending audio to server</button>
+    <div id="foo"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket   = ""
+        let recorder = ""
+
+        async function start(){
+            try{
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false})
+
+                socket   =io()
+                recorder = new MediaRecorder(stream)
+
+                // https://stackoverflow.com/questions/31094672/sending-video-and-audio-stream-to-server
+                // https://stackoverflow.com/questions/66074269/stream-audio-directly-from-browser-to-server
+
+                recorder.ondataavailable = (event) => { socket.emit("someEvent",event.data) }
+                recorder.onstop          = ()      => { socket.emit("end");socket=""}
+                
+                // 100 is the timeslice in millisecends that enables dataavailable event
+                recorder.start(100)
+            }catch(err){
+                console.log(err)
+            }
+        }
+
+        function stop(){
+            recorder.stop()
+        }
+    </script>
+</html>
