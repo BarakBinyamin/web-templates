@@ -4,6 +4,12 @@ let ctx      = ""
 let audioSrc = ""
 
 function start(){
+    audio.addEventListener("canplaythrough",()=>{console.log("canplaythrough")})
+    audio.addEventListener("emptied",()=>{console.log("emptied")})
+    audio.addEventListener("stalled",()=>{console.log("stalled")})
+    audio.addEventListener("waiting",()=>{console.log("waiting")})
+    audio.addEventListener("play",()=>{console.log("play")})
+
     if (!ctx){
         ctx = new AudioContext();
         analyser = ctx.createAnalyser();
